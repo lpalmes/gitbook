@@ -118,6 +118,7 @@ function serializeEntry(entry: CacheEntry): WorkerResponse {
     // @ts-ignore
     return new Response(JSON.stringify(entry), {
         headers,
+        // @ts-ignore
         cf: {
             cacheTags,
         },

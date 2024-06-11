@@ -1,6 +1,5 @@
 import { DocumentBlockCode, DocumentBlockCodeLine, DocumentInlineAnnotation } from '@gitbook/api';
 import {
-    loadWasm,
     ThemedToken,
     getHighlighter,
     createCssVariablesTheme,
@@ -8,8 +7,8 @@ import {
     bundledLanguages,
     bundledThemes,
 } from 'shiki';
-// @ts-ignore - onigWasm is a Wasm module
-import onigWasm from 'shiki/onig.wasm?module';
+
+import 'server-only';
 
 import { asyncMutexFunction, singleton } from '@/lib/async';
 import { getNodeText } from '@/lib/document';
@@ -305,13 +304,6 @@ function cleanupLine(line: string): string {
  */
 const loadHighlighter = singleton(async () => {
     return await trace('highlighting.loadHighlighter', async () => {
-        if (typeof onigWasm !== 'string') {
-            // When running bun test, the import is a string, we ignore it and let the module
-            // loads it on its own.
-            //
-            // Otherwise for Vercel/Cloudflare, we need to load it ourselves.
-            await loadWasm((obj) => WebAssembly.instantiate(onigWasm, obj));
-        }
         const highlighter = await getHighlighter({
             themes: [createCssVariablesTheme()],
             langs: [],

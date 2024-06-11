@@ -164,18 +164,18 @@ function getTagKey(tag: string, key: string) {
 }
 
 async function getKVNamespace(): Promise<KVNamespace | null> {
-    if (process.env.NODE_ENV === 'test') {
-        return null;
-    }
+    // if (process.env.NODE_ENV === 'test') {
+    //     return null;
+    // }
 
-    // We lazy-load the next-on-pages package to avoid errors when running tests because of 'server-only'.
-    const { getOptionalRequestContext } = await import('@cloudflare/next-on-pages');
+    // // We lazy-load the next-on-pages package to avoid errors when running tests because of 'server-only'.
+    // const { getOptionalRequestContext } = await import('@cloudflare/next-on-pages');
 
-    const cloudflare = getOptionalRequestContext();
-    if (cloudflare) {
-        // @ts-ignore
-        return cloudflare.env.CACHE_KV ?? null;
-    }
+    // const cloudflare = getOptionalRequestContext();
+    // if (cloudflare) {
+    //     // @ts-ignore
+    //     return cloudflare.env.CACHE_KV ?? null;
+    // }
 
     return null;
 }

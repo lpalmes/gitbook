@@ -7,8 +7,6 @@ import { shouldIndexSpace } from '@/lib/seo';
 
 import { getContentPointer } from '../../fetch';
 
-export const runtime = 'edge';
-
 /**
  * Generate a robots.txt for the current space.
  */

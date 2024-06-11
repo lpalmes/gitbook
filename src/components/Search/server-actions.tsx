@@ -17,7 +17,7 @@ import { absoluteHref, pageHref } from '@/lib/links';
 import { resolvePageId } from '@/lib/pages';
 import { filterOutNullable } from '@/lib/typescript';
 
-import { DocumentView } from '../DocumentView';
+// import { DocumentView } from '../DocumentView';
 
 export type OrderedComputedResult = ComputedPageResult | ComputedSectionResult;
 
@@ -154,18 +154,7 @@ function transformAnswer(
         .filter(filterOutNullable);
 
     return {
-        body: (
-            <DocumentView
-                document={answer.answer.document}
-                context={{
-                    mode: 'default',
-                    contentRefContext: null,
-                    resolveContentRef: async () => null,
-                    shouldHighlightCode: () => false,
-                }}
-                style={['space-y-5']}
-            />
-        ),
+        body: <div>Testing</div>,
         followupQuestions: answer.followupQuestions,
         sources,
     };

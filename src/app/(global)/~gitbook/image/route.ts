@@ -3,8 +3,6 @@ import { NextRequest } from 'next/server';
 import { verifyImageSignature, resizeImage, CloudflareImageOptions } from '@/lib/images';
 import { parseImageAPIURL } from '@/lib/urls';
 
-export const runtime = 'edge';
-
 /**
  * Only on Cloudflare Workers:
  *

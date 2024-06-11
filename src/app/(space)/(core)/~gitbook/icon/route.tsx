@@ -15,8 +15,6 @@ import {
 import { getEmojiForCode } from '@/lib/emojis';
 import { tcls } from '@/lib/tailwind';
 
-export const runtime = 'edge';
-
 const SIZES = {
     /** Size for a favicon */
     small: {
