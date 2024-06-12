@@ -19,8 +19,6 @@ import { ClientContexts } from './ClientContexts';
 import './globals.css';
 import { getContentPointer } from './fetch';
 
-export const runtime = 'nodejs';
-
 /**
  * Layout shared between the content and the PDF renderer.
  * It takes care of setting the theme and the language.
