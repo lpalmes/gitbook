@@ -8,8 +8,6 @@ import {
     bundledThemes,
 } from 'shiki';
 
-import 'server-only';
-
 import { asyncMutexFunction, singleton } from '@/lib/async';
 import { getNodeText } from '@/lib/document';
 import { trace } from '@/lib/tracing';

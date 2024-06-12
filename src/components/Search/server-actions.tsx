@@ -57,7 +57,7 @@ export interface AskAnswerResult {
 export async function searchSpaceContent(
     spaceId: string,
     revisionId: string,
-    query: string,
+    query: string
 ): Promise<OrderedComputedResult[]> {
     const data = await api.searchSpaceContent(spaceId, revisionId, query);
     return data.items.map((item) => transformPageResult(item, undefined)).flat();
@@ -68,7 +68,7 @@ export async function searchSpaceContent(
  */
 export async function searchParentContent(
     parent: Site | Collection,
-    query: string,
+    query: string
 ): Promise<OrderedComputedResult[]> {
     const pointer = getContentPointer();
 
@@ -91,8 +91,8 @@ export async function searchParentContent(
                     acc[siteSpace.space.id] = siteSpace.space;
                     return acc;
                 },
-                {} as Record<string, Space>,
-            ),
+                {} as Record<string, Space>
+            )
         );
     }
 
@@ -128,7 +128,7 @@ export async function getRecommendedQuestions(spaceId: string): Promise<string[]
 
 function transformAnswer(
     answer: SearchAIAnswer | undefined,
-    pages: RevisionPage[],
+    pages: RevisionPage[]
 ): AskAnswerResult | null {
     if (!answer || !('document' in answer.answer)) {
         return null;
@@ -154,6 +154,8 @@ function transformAnswer(
         .filter(filterOutNullable);
 
     return {
+        // TODO: when this server actions imports DocumentView it breaks the bundler
+        // upgrading to Next.js 15 fixes this
         body: <div>Testing</div>,
         followupQuestions: answer.followupQuestions,
         sources,
