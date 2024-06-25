@@ -4,16 +4,12 @@ import { headers } from 'next/headers';
 
 import { assetsDomain } from './assets';
 import { filterOutNullable } from './typescript';
+import { cache } from 'react';
 /**
  * Get the current nonce for the current request.
  */
 export function getContentSecurityPolicyNonce(): string {
-    const headersList = headers();
-    const nonce = headersList.get('x-nonce');
-    if (!nonce) {
-        throw new Error('No nonce found in headers');
-    }
-
+    const nonce = cachedCreateNonce();
     return nonce;
 }
 
@@ -24,6 +20,8 @@ export function createContentSecurityPolicyNonce(): string {
     const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
     return nonce;
 }
+
+const cachedCreateNonce = cache(createContentSecurityPolicyNonce);
 
 /**
  * Generate a Content Security Policy header for a space.

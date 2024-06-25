@@ -15,16 +15,19 @@ import { shouldIndexSpace } from '@/lib/seo';
 
 import { ClientContexts } from './ClientContexts';
 import { RocketLoaderDetector } from './RocketLoaderDetector';
-import { fetchSpaceData } from '../fetch';
+import { PagePathParams, fetchSpaceData } from '../../fetch';
 
-export default async function ContentLayoutStub(props: { children: React.ReactNode }) {
-    return props.children;
-}
+// export default async function ContentLayoutStub(props: { children: React.ReactNode }) {
+//     return props.children;
+// }
 
 /**
  * Layout when rendering the content.
  */
-export async function ContentLayout(props: { children: React.ReactNode }) {
+export default async function ContentLayout(props: {
+    children: React.ReactNode;
+    params: PagePathParams;
+}) {
     const { children } = props;
 
     const nonce = getContentSecurityPolicyNonce();
@@ -38,7 +41,7 @@ export async function ContentLayout(props: { children: React.ReactNode }) {
         spaces,
         ancestors,
         scripts,
-    } = await fetchSpaceData();
+    } = await fetchSpaceData(props.params.pathname ?? []);
 
     scripts.forEach(({ script }) => {
         ReactDOM.preload(script, {
@@ -90,8 +93,8 @@ export async function ContentLayout(props: { children: React.ReactNode }) {
     );
 }
 
-async function generateViewport(): Promise<Viewport> {
-    const { customization } = await fetchSpaceData();
+export async function generateViewport({ params }: { params: PagePathParams }): Promise<Viewport> {
+    const { customization } = await fetchSpaceData(params.pathname ?? []);
     return {
         colorScheme: customization.themes.toggeable
             ? customization.themes.default === CustomizationThemeMode.Dark
@@ -101,8 +104,8 @@ async function generateViewport(): Promise<Viewport> {
     };
 }
 
-async function generateMetadata(): Promise<Metadata> {
-    const { space, parent, customization } = await fetchSpaceData();
+async function generateMetadata({ params }: { params: PagePathParams }): Promise<Metadata> {
+    const { space, parent, customization } = await fetchSpaceData(params.pathname ?? []);
     const customIcon = 'icon' in customization.favicon ? customization.favicon.icon : null;
 
     return {

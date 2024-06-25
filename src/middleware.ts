@@ -19,7 +19,7 @@ import {
 } from '@/lib/api';
 import { race } from '@/lib/async';
 import { buildVersion } from '@/lib/build';
-import { createContentSecurityPolicyNonce, getContentSecurityPolicy } from '@/lib/csp';
+// import { createContentSecurityPolicyNonce, getContentSecurityPolicy } from '@/lib/csp';
 import { getURLLookupAlternatives, normalizeURL } from '@/lib/middleware';
 import {
     VisitorAuthCookieValue,

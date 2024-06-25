@@ -77,7 +77,7 @@ export function SpaceLayout(props: {
 
                         // Ensure the footer is display below the viewport even if the content is not enough
                         `min-h-[calc(100vh-64px)]`,
-                        withTopHeader ? null : 'lg:min-h-screen',
+                        withTopHeader ? null : 'lg:min-h-screen'
                     )}
                 >
                     <TableOfContents

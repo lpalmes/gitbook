@@ -34,7 +34,7 @@ export function HeaderLogo(props: HeaderLogoProps) {
                     'lg:hidden',
                     customization.header.preset === CustomizationHeaderPreset.Default
                         ? ['text-dark', 'dark:text-light']
-                        : 'text-header-link',
+                        : 'text-header-link'
                 )}
             />
             <Link
@@ -45,48 +45,49 @@ export function HeaderLogo(props: HeaderLogoProps) {
                     'flex',
                     'flex-row',
                     'items-center',
-                    'shrink-0',
+                    'shrink-0'
                 )}
             >
-                {customization.header.logo ? (
-                    <Image
-                        alt="Logo"
-                        sources={{
-                            light: {
-                                src: customization.header.logo.light,
-                            },
-                            dark: customization.header.logo.dark
-                                ? {
-                                      src: customization.header.logo.dark,
-                                  }
-                                : null,
-                        }}
-                        sizes={[
-                            {
-                                media: '(max-width: 1024px)',
-                                width: 128,
-                            },
-                            {
-                                width: 192,
-                            },
-                        ]}
-                        priority="high"
-                        style={tcls(
-                            'max-w-[8rem]',
-                            'lg:max-w-[12rem]',
-                            'max-h-[3rem]',
-                            'rounded',
-                            'straight-corners:rounded-sm',
-                            'overflow-hidden',
-                            'object-contain',
-                            'object-left',
-                        )}
-                    />
-                ) : (
-                    <>
-                        <LogoFallback {...props} />
-                    </>
-                )}
+                {/* TODO: renable logo */}
+                {/* {customization.header.logo ? ( */}
+                {/*     <Image */}
+                {/*         alt="Logo" */}
+                {/*         sources={{ */}
+                {/*             light: { */}
+                {/*                 src: customization.header.logo.light, */}
+                {/*             }, */}
+                {/*             dark: customization.header.logo.dark */}
+                {/*                 ? { */}
+                {/*                       src: customization.header.logo.dark, */}
+                {/*                   } */}
+                {/*                 : null, */}
+                {/*         }} */}
+                {/*         sizes={[ */}
+                {/*             { */}
+                {/*                 media: '(max-width: 1024px)', */}
+                {/*                 width: 128, */}
+                {/*             }, */}
+                {/*             { */}
+                {/*                 width: 192, */}
+                {/*             }, */}
+                {/*         ]} */}
+                {/*         priority="high" */}
+                {/*         style={tcls( */}
+                {/*             'max-w-[8rem]', */}
+                {/*             'lg:max-w-[12rem]', */}
+                {/*             'max-h-[3rem]', */}
+                {/*             'rounded', */}
+                {/*             'straight-corners:rounded-sm', */}
+                {/*             'overflow-hidden', */}
+                {/*             'object-contain', */}
+                {/*             'object-left', */}
+                {/*         )} */}
+                {/*     /> */}
+                {/* ) : ( */}
+                {/*     <> */}
+                {/*         <LogoFallback {...props} /> */}
+                {/*     </> */}
+                {/* )} */}
             </Link>
         </div>
     );
@@ -142,7 +143,7 @@ function LogoFallback(props: HeaderLogoProps) {
                     customization.header.preset === CustomizationHeaderPreset.Default ||
                         customization.header.preset === CustomizationHeaderPreset.None
                         ? ['text-dark', 'dark:text-light']
-                        : 'text-header-link',
+                        : 'text-header-link'
                 )}
             >
                 {parent ? parent.title : customization.title ?? space.title}

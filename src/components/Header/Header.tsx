@@ -57,7 +57,7 @@ export function Header(props: {
                     isCustomizationDefault || !withTopHeader
                         ? 'dark:bg-dark'
                         : 'bg-header-background'
-                }`,
+                }`
             )}
         >
             <div className={tcls('scroll-nojump')}>
@@ -72,7 +72,7 @@ export function Header(props: {
                         'align-center',
                         'justify-between',
                         'w-full',
-                        CONTAINER_STYLE,
+                        CONTAINER_STYLE
                     )}
                 >
                     <HeaderLogo parent={parent} space={space} customization={customization} />
@@ -97,7 +97,7 @@ export function Header(props: {
                             'md:w-56',
                             'grow-0',
                             'shrink-0',
-                            'justify-self-end',
+                            'justify-self-end'
                         )}
                     >
                         <Suspense fallback={null}>
@@ -122,7 +122,7 @@ export function Header(props: {
                                 <span className={tcls('flex-1')}>
                                     {t(
                                         getSpaceLanguage(customization),
-                                        customization.aiSearch.enabled ? 'search_or_ask' : 'search',
+                                        customization.aiSearch.enabled ? 'search_or_ask' : 'search'
                                     )}
                                 </span>
                             </SearchButton>

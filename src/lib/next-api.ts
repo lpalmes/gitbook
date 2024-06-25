@@ -4,6 +4,7 @@ export async function getContentPointerByPathname(pathname: string) {
     const content = await getPublishedContentByUrl(pathname, undefined);
 
     if ('error' in content) {
+        console.log(pathname);
         throw new Error(content.error.message);
     }
 

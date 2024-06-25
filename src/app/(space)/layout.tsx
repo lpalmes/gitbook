@@ -44,7 +44,6 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
  * It takes care of setting the theme and the language.
  */
 export async function SpaceRootLayout(props: { children: React.ReactNode }) {
-    console.log(props);
     const { children } = props;
 
     const pointer = getContentPointer();

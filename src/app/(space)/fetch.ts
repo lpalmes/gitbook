@@ -67,8 +67,10 @@ export function getContentPointer(): ContentPointer | SiteContentPointer {
 /**
  * Fetch all the data needed to render the space layout.
  */
-export async function fetchSpaceData() {
-    const content = getContentPointer();
+export async function fetchSpaceData(pathname: string[]) {
+    const rawPathname = `https://${getPathnameParam(pathname)}`;
+    const content = await getContentPointerByPathname(rawPathname);
+    // const content = getContentPointer();
 
     const [{ space, contentTarget, pages, customization, scripts }, parentSite] = await Promise.all(
         'siteId' in content
