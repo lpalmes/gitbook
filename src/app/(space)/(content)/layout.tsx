@@ -17,10 +17,14 @@ import { ClientContexts } from './ClientContexts';
 import { RocketLoaderDetector } from './RocketLoaderDetector';
 import { fetchSpaceData } from '../fetch';
 
+export default async function ContentLayoutStub(props: { children: React.ReactNode }) {
+    return props.children;
+}
+
 /**
  * Layout when rendering the content.
  */
-export default async function ContentLayout(props: { children: React.ReactNode }) {
+export async function ContentLayout(props: { children: React.ReactNode }) {
     const { children } = props;
 
     const nonce = getContentSecurityPolicyNonce();
@@ -86,7 +90,7 @@ export default async function ContentLayout(props: { children: React.ReactNode }
     );
 }
 
-export async function generateViewport(): Promise<Viewport> {
+async function generateViewport(): Promise<Viewport> {
     const { customization } = await fetchSpaceData();
     return {
         colorScheme: customization.themes.toggeable
@@ -97,7 +101,7 @@ export async function generateViewport(): Promise<Viewport> {
     };
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+async function generateMetadata(): Promise<Metadata> {
     const { space, parent, customization } = await fetchSpaceData();
     const customIcon = 'icon' in customization.favicon ? customization.favicon.icon : null;
 

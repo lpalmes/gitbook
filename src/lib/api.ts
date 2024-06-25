@@ -103,12 +103,14 @@ export function api(): GitBookAPI {
         return existing;
     }
 
-    const headersList = headers();
-    const apiToken = headersList.get('x-gitbook-token');
+    const apiToken = process.env.GITBOOK_TOKEN;
+
+    // const headersList = headers();
+    // const apiToken = headersList.get('x-gitbook-token');
 
     if (!apiToken) {
         throw new Error(
-            'Missing GitBook API token, please check that the request is correctly processed by the middleware',
+            'Missing GitBook API token, please check that the request is correctly processed by the middleware'
         );
     }
 
@@ -160,7 +162,7 @@ export const getUserById = cache(
 
             throw error;
         }
-    },
+    }
 );
 
 /**
@@ -172,7 +174,7 @@ export const getSyncedBlockContent = cache(
         apiToken: string,
         organizationId: string,
         syncedBlockId: string,
-        options: CacheFunctionOptions,
+        options: CacheFunctionOptions
     ) => {
         try {
             const response = await apiWithToken(apiToken).orgs.getSyncedBlockContent(
@@ -181,7 +183,7 @@ export const getSyncedBlockContent = cache(
                 {
                     ...noCacheFetchOptions,
                     signal: options.signal,
-                },
+                }
             );
             return cacheResponse(response, {
                 revalidateBefore: 60 * 60,
@@ -207,7 +209,7 @@ export const getSyncedBlockContent = cache(
     {
         // We don't cache apiToken as it's not a stable key
         extractArgs: (args) => [args[1], args[2]],
-    },
+    }
 );
 /**
  * Resolve a URL to the content to render.
@@ -226,7 +228,7 @@ export const getPublishedContentByUrl = cache(
                 {
                     signal: options.signal,
                     ...noCacheFetchOptions,
-                },
+                }
             );
 
             const parsed = parseCacheResponse(response);
@@ -269,7 +271,7 @@ export const getPublishedContentByUrl = cache(
 
             throw error;
         }
-    },
+    }
 );
 
 /**
@@ -286,7 +288,7 @@ export const getSpace = cache(
             revalidateBefore: 60 * 60,
             tags: [getAPICacheTag({ tag: 'space', space: spaceId })],
         });
-    },
+    }
 );
 
 /**
@@ -306,7 +308,7 @@ export const getChangeRequest = cache(
             revalidateBefore: 10 * 60,
             tags: [],
         });
-    },
+    }
 );
 
 /**
@@ -323,7 +325,7 @@ export const getSpaceIntegrationScripts = cache(
             revalidateBefore: 60 * 60,
             tags: [getAPICacheTag({ tag: 'space', space: spaceId })],
         });
-    },
+    }
 );
 
 interface GetRevisionOptions {
@@ -345,7 +347,7 @@ export const getRevision = cache(
         spaceId: string,
         revisionId: string,
         fetchOptions: GetRevisionOptions,
-        options: CacheFunctionOptions,
+        options: CacheFunctionOptions
     ) => {
         const response = await api().spaces.getRevisionById(
             spaceId,
@@ -356,17 +358,17 @@ export const getRevision = cache(
             {
                 ...noCacheFetchOptions,
                 signal: options.signal,
-            },
+            }
         );
 
         return cacheResponse(
             response,
-            fetchOptions.metadata ? immutableCacheTtl_7days : immutableCacheTtl_1day,
+            fetchOptions.metadata ? immutableCacheTtl_7days : immutableCacheTtl_1day
         );
     },
     {
         extractArgs: (args) => [args[0], args[1]],
-    },
+    }
 );
 
 /**
@@ -378,7 +380,7 @@ export const getRevisionPages = cache(
         spaceId: string,
         revisionId: string,
         fetchOptions: GetRevisionOptions,
-        options: CacheFunctionOptions,
+        options: CacheFunctionOptions
     ) => {
         const response = await api().spaces.listPagesInRevisionById(
             spaceId,
@@ -389,7 +391,7 @@ export const getRevisionPages = cache(
             {
                 ...noCacheFetchOptions,
                 signal: options.signal,
-            },
+            }
         );
 
         return cacheResponse(response, {
@@ -399,7 +401,7 @@ export const getRevisionPages = cache(
     },
     {
         extractArgs: (args) => [args[0], args[1]],
-    },
+    }
 );
 
 /**
@@ -411,7 +413,7 @@ export const getRevisionPageByPath = cache(
         spaceId: string,
         revisionId: string,
         pagePath: string,
-        options: CacheFunctionOptions,
+        options: CacheFunctionOptions
     ) => {
         const encodedPath = encodeURIComponent(pagePath);
 
@@ -426,7 +428,7 @@ export const getRevisionPageByPath = cache(
                 {
                     ...noCacheFetchOptions,
                     signal: options.signal,
-                },
+                }
             );
 
             return cacheResponse(response, immutableCacheTtl_7days);
@@ -440,7 +442,7 @@ export const getRevisionPageByPath = cache(
 
             throw error;
         }
-    },
+    }
 );
 
 /**
@@ -462,7 +464,7 @@ const getRevisionFileById = cache(
                     {
                         ...noCacheFetchOptions,
                         signal: options.signal,
-                    },
+                    }
                 );
             })();
 
@@ -474,7 +476,7 @@ const getRevisionFileById = cache(
 
             throw error;
         }
-    },
+    }
 );
 
 /**
@@ -496,11 +498,11 @@ const getRevisionAllFiles = cache(
                     {
                         ...noCacheFetchOptions,
                         signal: options.signal,
-                    },
+                    }
                 ),
             {
                 limit: 1000,
-            },
+            }
         );
 
         const files: { [fileId: string]: RevisionFile } = {};
@@ -512,7 +514,7 @@ const getRevisionAllFiles = cache(
     },
     {
         timeout: 60 * 1000,
-    },
+    }
 );
 
 /**
@@ -548,8 +550,8 @@ export const getRevisionFile = batch<[string, string, string], RevisionFile | nu
             // Fetch file individually
             return Promise.all(
                 executions.map(([spaceId, revisionId, fileId]) =>
-                    getRevisionFileById(spaceId, revisionId, fileId),
-                ),
+                    getRevisionFileById(spaceId, revisionId, fileId)
+                )
             );
         }
     },
@@ -565,7 +567,7 @@ export const getRevisionFile = batch<[string, string, string], RevisionFile | nu
                 (await getRevisionFileById.hasInMemory(spaceId, revisionId, fileId))
             );
         },
-    },
+    }
 );
 
 /**
@@ -583,7 +585,7 @@ export const getDocument = cache(
             {
                 signal: options.signal,
                 ...noCacheFetchOptions,
-            },
+            }
         );
         return cacheResponse(response, immutableCacheTtl_7days);
     },
@@ -592,7 +594,7 @@ export const getDocument = cache(
         // because GitBook's API currently re-normalizes all documents
         // and it can take more than 10s...
         timeout: 20 * 1000,
-    },
+    }
 );
 
 /**
@@ -604,7 +606,7 @@ const getSiteSpaceCustomizationFromAPI = cache(
         organizationId: string,
         siteId: string,
         siteSpaceId: string,
-        options: CacheFunctionOptions,
+        options: CacheFunctionOptions
     ) => {
         const response = await api().orgs.getSiteSpaceCustomizationById(
             organizationId,
@@ -614,7 +616,7 @@ const getSiteSpaceCustomizationFromAPI = cache(
             {
                 signal: options.signal,
                 ...noCacheFetchOptions,
-            },
+            }
         );
         return cacheResponse(response, {
             revalidateBefore: 60 * 60,
@@ -625,7 +627,7 @@ const getSiteSpaceCustomizationFromAPI = cache(
                 }),
             ],
         });
-    },
+    }
 );
 
 /**
@@ -641,7 +643,7 @@ const getSiteCustomizationFromAPI = cache(
             {
                 signal: options.signal,
                 ...noCacheFetchOptions,
-            },
+            }
         );
         return cacheResponse(response, {
             revalidateBefore: 60 * 60,
@@ -652,7 +654,7 @@ const getSiteCustomizationFromAPI = cache(
                 }),
             ],
         });
-    },
+    }
 );
 
 /**
@@ -667,7 +669,7 @@ async function getSiteSpaceCustomization(args: {
     const raw = await getSiteSpaceCustomizationFromAPI(
         args.organizationId,
         args.siteId,
-        args.siteSpaceId,
+        args.siteSpaceId
     );
 
     const extend = headersList.get('x-gitbook-customization');
@@ -679,7 +681,7 @@ async function getSiteSpaceCustomization(args: {
             console.error(
                 `Failed to parse x-gitbook-customization header (ignored): ${
                     (error as Error).stack ?? (error as Error).message ?? error
-                }`,
+                }`
             );
         }
     }
@@ -706,7 +708,7 @@ async function getSiteCustomization(args: {
             console.error(
                 `Failed to parse x-gitbook-customization header (ignored): ${
                     (error as Error).stack ?? (error as Error).message ?? error
-                }`,
+                }`
             );
         }
     }
@@ -728,7 +730,7 @@ export const getSite = cache(
             revalidateBefore: 60 * 60,
             tags: [getAPICacheTag({ tag: 'site', site: siteId })],
         });
-    },
+    }
 );
 
 /**
@@ -741,7 +743,7 @@ export const getSiteSpaces = cache(
             api().orgs.listSiteSpaces(organizationId, siteId, params, {
                 ...noCacheFetchOptions,
                 signal: options.signal,
-            }),
+            })
         );
 
         return cacheResponse(response, {
@@ -749,7 +751,7 @@ export const getSiteSpaces = cache(
             data: response.data.items.map((siteSpace) => siteSpace),
             tags: [getAPICacheTag({ tag: 'site', site: siteId })],
         });
-    },
+    }
 );
 
 /**
@@ -766,7 +768,7 @@ export const getSiteIntegrationScripts = cache(
             revalidateBefore: 60 * 60,
             tags: [getAPICacheTag({ tag: 'site', site: siteId })],
         });
-    },
+    }
 );
 
 /**
@@ -849,7 +851,7 @@ export const getSpaceCustomizationFromAPI = cache(
             revalidateBefore: 60 * 60,
             tags: [getAPICacheTag({ tag: 'space', space: spaceId })],
         });
-    },
+    }
 );
 
 /**
@@ -868,7 +870,7 @@ export async function getSpaceCustomization(spaceId: string): Promise<Customizat
             console.error(
                 `Failed to parse x-gitbook-customization header (ignored): ${
                     (error as Error).stack ?? (error as Error).message ?? error
-                }`,
+                }`
             );
         }
     }
@@ -890,7 +892,7 @@ export const getCollection = cache(
             revalidateBefore: 60 * 60,
             tags: [getAPICacheTag({ tag: 'collection', collection: collectionId })],
         });
-    },
+    }
 );
 
 /**
@@ -903,17 +905,17 @@ export const getCollectionSpaces = cache(
             api().collections.listSpacesInCollectionById(collectionId, params, {
                 ...noCacheFetchOptions,
                 signal: options.signal,
-            }),
+            })
         );
 
         return cacheResponse(response, {
             revalidateBefore: 60 * 60,
             data: response.data.items.filter(
-                (space) => space.visibility === ContentVisibility.InCollection,
+                (space) => space.visibility === ContentVisibility.InCollection
             ),
             tags: [getAPICacheTag({ tag: 'collection', collection: collectionId })],
         });
-    },
+    }
 );
 
 /**
@@ -949,6 +951,7 @@ export async function getSpaceContentData(pointer: ContentPointer) {
         spaceId: pointer.spaceId,
         revisionId: changeRequest?.revision ?? pointer.revisionId ?? space.revision,
     };
+
     const [pages] = await Promise.all([
         getRevisionPages(space.id, contentTarget.revisionId, {
             // We only care about the Git metadata when the Git sync is enabled
@@ -989,7 +992,7 @@ export const searchSpaceContent = cache(
         /** The revision ID is used as a cache bust key, to avoid revalidating lot of cache entries by tags */
         revisionId: string,
         query: string,
-        options: CacheFunctionOptions,
+        options: CacheFunctionOptions
     ) => {
         const response = await api().spaces.searchSpaceContent(
             spaceId,
@@ -997,12 +1000,12 @@ export const searchSpaceContent = cache(
             {
                 ...noCacheFetchOptions,
                 signal: options.signal,
-            },
+            }
         );
         return cacheResponse(response, {
             tags: [],
         });
-    },
+    }
 );
 
 /**
@@ -1016,13 +1019,13 @@ export const searchParentContent = cache(
             {
                 ...noCacheFetchOptions,
                 signal: options.signal,
-            },
+            }
         );
         return cacheResponse(response, {
             ttl: 60 * 60,
             tags: [],
         });
-    },
+    }
 );
 
 /**
@@ -1038,7 +1041,7 @@ export const getRecommendedQuestionsInSpace = cache(
         return cacheResponse(response, {
             tags: [],
         });
-    },
+    }
 );
 
 /**
@@ -1049,7 +1052,7 @@ export const renderIntegrationUi = cache(
     async (
         integrationName: string,
         request: RequestRenderIntegrationUI,
-        options: CacheFunctionOptions,
+        options: CacheFunctionOptions
     ) => {
         const response = await api().integrations.renderIntegrationUiWithPost(
             integrationName,
@@ -1057,12 +1060,12 @@ export const renderIntegrationUi = cache(
             {
                 ...noCacheFetchOptions,
                 signal: options.signal,
-            },
+            }
         );
         return cacheResponse(response, {
             tags: [],
         });
-    },
+    }
 );
 
 /**
@@ -1093,7 +1096,7 @@ export function getAPICacheTag(
         | {
               tag: 'site';
               site: string;
-          },
+          }
 ): string {
     switch (spec.tag) {
         case 'url':
@@ -1132,7 +1135,7 @@ export function userAgent(): string {
  */
 export async function ignoreAPIError<T>(
     promise: Promise<T>,
-    ignoreAll: boolean = false,
+    ignoreAll: boolean = false
 ): Promise<T | null> {
     try {
         return await promise;
@@ -1160,7 +1163,7 @@ async function getAll<T, E>(
     >,
     options: {
         limit?: number;
-    } = {},
+    } = {}
 ): Promise<
     HttpResponse<
         List & {

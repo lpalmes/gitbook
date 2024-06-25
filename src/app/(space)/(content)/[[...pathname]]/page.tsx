@@ -13,16 +13,20 @@ import { tcls } from '@/lib/tailwind';
 import { PageClientLayout } from './PageClientLayout';
 import { PagePathParams, fetchPageData, getPathnameParam, normalizePathname } from '../../fetch';
 
+export const dynamic = 'force-static';
+
 /**
  * Fetch and render a page.
  */
 export default async function Page(props: { params: PagePathParams }) {
     const { params } = props;
 
-    const rawPathname = getPathnameParam(params);
+    const rawPathname = getPathnameParam(params.pathname?.slice(2));
     const { contentTarget, space, customization, pages, page, document } =
         await fetchPageData(params);
     const linksContext: PageHrefContext = {};
+
+    console.log({ page });
 
     if (!page) {
         const pathname = normalizePathname(rawPathname);
@@ -90,7 +94,8 @@ export default async function Page(props: { params: PagePathParams }) {
     );
 }
 
-export async function generateViewport({ params }: { params: PagePathParams }): Promise<Viewport> {
+// TODO: renable viewport
+async function generateViewport({ params }: { params: PagePathParams }): Promise<Viewport> {
     const { customization } = await fetchPageData(params);
     return {
         colorScheme: customization.themes.toggeable
@@ -101,7 +106,8 @@ export async function generateViewport({ params }: { params: PagePathParams }): 
     };
 }
 
-export async function generateMetadata({ params }: { params: PagePathParams }): Promise<Metadata> {
+// TODO: renable metadata
+async function generateMetadata({ params }: { params: PagePathParams }): Promise<Metadata> {
     const { space, pages, page, customization, parent } = await fetchPageData(params);
     if (!page) {
         notFound();
@@ -122,4 +128,8 @@ export async function generateMetadata({ params }: { params: PagePathParams }): 
             ],
         },
     };
+}
+
+export async function generateStaticParams() {
+    return [];
 }

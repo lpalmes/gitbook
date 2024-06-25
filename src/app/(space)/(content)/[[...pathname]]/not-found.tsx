@@ -3,14 +3,16 @@ import { getCurrentSiteLayoutData, getSpaceLayoutData } from '@/lib/api';
 import { tcls } from '@/lib/tailwind';
 
 import { getContentPointer } from '../../fetch';
+import { languages } from '@/intl/translations';
 
 export default async function NotFound() {
-    const pointer = getContentPointer();
-    const { customization } = await ('siteId' in pointer
-        ? getCurrentSiteLayoutData(pointer)
-        : getSpaceLayoutData(pointer.spaceId));
+    // const pointer = getContentPointer();
+    // const { customization } = await ('siteId' in pointer
+    //     ? getCurrentSiteLayoutData(pointer)
+    //     : getSpaceLayoutData(pointer.spaceId));
 
-    const language = getSpaceLanguage(customization);
+    // const language = getSpaceLanguage(customization);
+    const language = languages['en'];
 
     return (
         <div

@@ -15,6 +15,7 @@ import {
     getSiteSpaces,
 } from '@/lib/api';
 import { resolvePagePath, resolvePageId } from '@/lib/pages';
+import { getContentPointerByPathname } from '@/lib/next-api';
 
 export interface PagePathParams {
     pathname?: string[];
@@ -32,7 +33,7 @@ export function getContentPointer(): ContentPointer | SiteContentPointer {
     const spaceId = headerSet.get('x-gitbook-content-space');
     if (!spaceId) {
         throw new Error(
-            'getContentPointer is called outside the scope of a request processed by the middleware',
+            'getContentPointer is called outside the scope of a request processed by the middleware'
         );
     }
 
@@ -72,7 +73,7 @@ export async function fetchSpaceData() {
     const [{ space, contentTarget, pages, customization, scripts }, parentSite] = await Promise.all(
         'siteId' in content
             ? [getCurrentSiteData(content), fetchParentSite(content.organizationId, content.siteId)]
-            : [getSpaceData(content)],
+            : [getSpaceData(content)]
     );
 
     const parent = await (parentSite ?? fetchParentCollection(space));
@@ -94,12 +95,23 @@ export async function fetchSpaceData() {
  * Optimized to fetch in parallel as much as possible.
  */
 export async function fetchPageData(params: PagePathParams | PageIdParams) {
-    const content = getContentPointer();
+    // const content = getContentPointer();
+
+    // @ts-ignore
+    const rawPathname = `https://${getPathnameParam(params.pathname)}`;
+
+    console.log(rawPathname);
+
+    const content = await getContentPointerByPathname(rawPathname);
+
+    console.log({ content });
+
     const { space, contentTarget, pages, customization, scripts } = await ('siteId' in content
         ? getCurrentSiteData(content)
         : getSpaceData(content));
 
     const page = await resolvePage(contentTarget, pages, params);
+
     const [parent, document] = await Promise.all([
         'siteId' in content
             ? fetchParentSite(content.organizationId, content.siteId)
@@ -128,13 +140,13 @@ export async function fetchPageData(params: PagePathParams | PageIdParams) {
 async function resolvePage(
     contentTarget: ContentTarget,
     pages: RevisionPage[],
-    params: PagePathParams | PageIdParams,
+    params: PagePathParams | PageIdParams
 ) {
     if ('pageId' in params) {
         return resolvePageId(pages, params.pageId);
     }
 
-    const rawPathname = getPathnameParam(params);
+    const rawPathname = getPathnameParam(params.pathname?.slice(2));
     const pathname = normalizePathname(rawPathname);
 
     // When resolving a page, we use the lowercased pathname
@@ -152,7 +164,7 @@ async function resolvePage(
         const resolved = await getRevisionPageByPath(
             contentTarget.spaceId,
             contentTarget.revisionId,
-            rawPathname,
+            rawPathname
         );
         if (resolved) {
             return resolvePageId(pages, resolved.id);
@@ -196,8 +208,7 @@ async function fetchParentSite(organizationId: string, siteId: string) {
 /**
  * Get the page path from the params.
  */
-export function getPathnameParam(params: PagePathParams): string {
-    const { pathname } = params;
+export function getPathnameParam(pathname: string[] | undefined): string {
     return pathname ? pathname.map((part) => decodeURIComponent(part)).join('/') : '';
 }
 

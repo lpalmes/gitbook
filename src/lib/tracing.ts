@@ -16,7 +16,7 @@ interface TraceName {
  */
 export async function trace<T>(
     name: string | TraceName,
-    fn: (span: TraceSpan) => Promise<T>,
+    fn: (span: TraceSpan) => Promise<T>
 ): Promise<T> {
     const { operation, name: executionName } =
         typeof name === 'string' ? { operation: name, name: undefined } : name;
@@ -44,9 +44,9 @@ export async function trace<T>(
                 throw error;
             } finally {
                 let end = now();
-                console.log(`trace ${completeName} ${end - start}ms`, attributes);
+                // console.log(`trace ${completeName} ${end - start}ms`, attributes);
             }
-        },
+        }
     );
 }
 

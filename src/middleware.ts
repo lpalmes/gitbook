@@ -83,6 +83,10 @@ interface ContentAPITokenPayload {
     siteSpace?: string;
 }
 
+export async function middleware(request: NextRequest) {
+    return NextResponse.next();
+}
+
 /**
  * Middleware to lookup the space to render.
  * It takes as input a request with an URL, and a set of headers:
@@ -91,7 +95,7 @@ interface ContentAPITokenPayload {
  *
  * The middleware also takes care of persisting the visitor authentication state.
  */
-export async function middleware(request: NextRequest) {
+export async function middleware2(request: NextRequest) {
     const { url, mode } = getInputURL(request);
 
     Sentry.setTag('url', url.toString());
@@ -115,13 +119,15 @@ export async function middleware(request: NextRequest) {
 
     const inputURL = stripURLBasePath(url, originBasePath);
 
+    console.log({ inputURL });
+
     const resolved = await withAPI(
         new GitBookAPI({
             endpoint: apiEndpoint,
             authToken: getDefaultAPIToken(apiEndpoint),
             userAgent: userAgent(),
         }),
-        () => lookupSpaceForURL(mode, request, inputURL),
+        () => lookupSpaceForURL(mode, request, inputURL)
     );
     if ('error' in resolved) {
         return new NextResponse(resolved.error.message, {
@@ -176,7 +182,7 @@ export async function middleware(request: NextRequest) {
                     spaceId: resolved.space,
                     changeRequestId: resolved.changeRequest,
                     revisionId: resolved.revision,
-                }),
+                })
             );
 
             const { scripts } = await ('site' in resolved
@@ -187,8 +193,10 @@ export async function middleware(request: NextRequest) {
                   })
                 : getSpaceLayoutData(resolved.space));
             return getContentSecurityPolicy(scripts, nonce);
-        },
+        }
     );
+
+    console.log({ resolved });
 
     const headers = new Headers(request.headers);
     // https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
@@ -234,12 +242,12 @@ export async function middleware(request: NextRequest) {
     target.search = url.search;
 
     const response = writeCookies(
-        NextResponse.rewrite(target, {
+        NextResponse.next({
             request: {
                 headers,
             },
         }),
-        resolved.cookies,
+        resolved.cookies
     );
 
     response.headers.set('x-gitbook-version', buildVersion());
@@ -257,7 +265,7 @@ export async function middleware(request: NextRequest) {
         // To avoid cache poisoning, we don't cache prefetch requests
         response.headers.set(
             'cache-control',
-            'private, no-cache, no-store, max-age=0, must-revalidate',
+            'private, no-cache, no-store, max-age=0, must-revalidate'
         );
     } else {
         if (resolved.cacheMaxAge) {
@@ -323,7 +331,7 @@ function getInputURL(request: NextRequest): { url: URL; mode: URLLookupMode } {
 async function lookupSpaceForURL(
     mode: URLLookupMode,
     request: NextRequest,
-    url: URL,
+    url: URL
 ): Promise<LookupResult> {
     switch (mode) {
         case 'single': {
@@ -351,14 +359,14 @@ async function lookupSpaceInSingleMode(url: URL): Promise<LookupResult> {
     const spaceId = process.env.GITBOOK_SPACE_ID;
     if (!spaceId) {
         throw new Error(
-            `Missing GITBOOK_SPACE_ID environment variable. It should be passed when using GITBOOK_MODE=single.`,
+            `Missing GITBOOK_SPACE_ID environment variable. It should be passed when using GITBOOK_MODE=single.`
         );
     }
 
     const apiToken = getDefaultAPIToken(api().endpoint);
     if (!apiToken) {
         throw new Error(
-            `Missing GITBOOK_TOKEN environment variable. It should be passed when using GITBOOK_MODE=single.`,
+            `Missing GITBOOK_TOKEN environment variable. It should be passed when using GITBOOK_MODE=single.`
         );
     }
 
@@ -458,7 +466,7 @@ async function lookupSpaceInMultiIdMode(request: NextRequest, url: URL): Promise
             authToken: apiToken,
             userAgent: userAgent(),
         }),
-        () => getSpace.revalidate(spaceId),
+        () => getSpace.revalidate(spaceId)
     );
 
     const cookies: LookupCookies = {
@@ -566,7 +574,7 @@ async function lookupSpaceInMultiPathMode(request: NextRequest, url: URL): Promi
                 target: 'content',
                 redirect: new URL(
                     `/` + redirect.hostname + redirect.pathname + redirect.search,
-                    url,
+                    url
                 ).toString(),
             };
         }
@@ -589,14 +597,16 @@ async function lookupSpaceInMultiPathMode(request: NextRequest, url: URL): Promi
  */
 async function lookupSpaceByAPI(
     lookupURL: URL,
-    visitorAuthToken: ReturnType<typeof getVisitorAuthToken>,
+    visitorAuthToken: ReturnType<typeof getVisitorAuthToken>
 ): Promise<LookupResult> {
     const url = stripURLSearch(lookupURL);
     const lookup = getURLLookupAlternatives(url);
 
     console.log(
-        `lookup content for url "${url.toString()}", with ${lookup.urls.length} alternatives`,
+        `lookup content for url "${url.toString()}", with ${lookup.urls.length} alternatives`
     );
+
+    console.log(lookup);
 
     const result = await race(lookup.urls, async (alternative, { signal }) => {
         const data = await getPublishedContentByUrl(
@@ -608,7 +618,7 @@ async function lookupSpaceByAPI(
                   : visitorAuthToken.token,
             {
                 signal,
-            },
+            }
         );
 
         if ('error' in data) {
@@ -636,8 +646,8 @@ async function lookupSpaceByAPI(
                                 'location',
                                 joinPath(
                                     redirect.searchParams.get('location') ?? '',
-                                    alternative.extraPath,
-                                ),
+                                    alternative.extraPath
+                                )
                             );
                             data.redirect = redirect.toString();
                         }
@@ -681,7 +691,7 @@ async function lookupSpaceByAPI(
  */
 function getLookupResultForVisitorAuth(
     basePath: string,
-    visitorAuthToken: string | VisitorAuthCookieValue,
+    visitorAuthToken: string | VisitorAuthCookieValue
 ): Partial<LookupResult> {
     return {
         // No caching for content served with visitor auth
@@ -700,7 +710,7 @@ function getLookupResultForVisitorAuth(
                               basePath,
                               typeof visitorAuthToken === 'string'
                                   ? visitorAuthToken
-                                  : visitorAuthToken.token,
+                                  : visitorAuthToken.token
                           ),
                           options: {
                               httpOnly: true,
@@ -782,7 +792,7 @@ function encodePathname(pathname: string): string {
 
 function decodeGitBookTokenCookie(
     spaceId: string,
-    cookie: string | undefined,
+    cookie: string | undefined
 ): { apiToken: string; apiEndpoint: string | undefined } | undefined {
     if (!cookie) {
         return;
@@ -804,7 +814,7 @@ function decodeGitBookTokenCookie(
 function encodeGitBookTokenCookie(
     spaceId: string,
     token: string,
-    apiEndpoint: string | undefined,
+    apiEndpoint: string | undefined
 ): string {
     return JSON.stringify({ s: spaceId, t: token, e: apiEndpoint });
 }
@@ -817,7 +827,7 @@ function writeCookies<R extends NextResponse>(
             value: string;
             options?: Partial<ResponseCookie>;
         }
-    > = {},
+    > = {}
 ): R {
     Object.entries(cookies).forEach(([key, { value, options }]) => {
         response.cookies.set(key, value, options);

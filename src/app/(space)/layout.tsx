@@ -19,14 +19,37 @@ import { ClientContexts } from './ClientContexts';
 import './globals.css';
 import { getContentPointer } from './fetch';
 
+import { languages } from '@/intl/translations';
+
+export default async function RootLayout(props: { children: React.ReactNode }) {
+    return (
+        <html suppressHydrationWarning lang="en">
+            <head></head>
+            <body
+                className={tcls(
+                    emojiFontClassName,
+                    `${ibmPlexMono.variable}`,
+                    'bg-light',
+                    'dark:bg-dark'
+                )}
+            >
+                <ClientContexts language={languages['en']}>{props.children}</ClientContexts>
+            </body>
+        </html>
+    );
+}
+
 /**
  * Layout shared between the content and the PDF renderer.
  * It takes care of setting the theme and the language.
  */
-export default async function SpaceRootLayout(props: { children: React.ReactNode }) {
+export async function SpaceRootLayout(props: { children: React.ReactNode }) {
+    console.log(props);
     const { children } = props;
 
     const pointer = getContentPointer();
+
+    console.log(pointer);
     const { customization } = await ('siteId' in pointer
         ? getCurrentSiteLayoutData(pointer)
         : getSpaceLayoutData(pointer.spaceId));
@@ -44,7 +67,7 @@ export default async function SpaceRootLayout(props: { children: React.ReactNode
                         : [
                               // Take the sticky header in consideration for the scrolling
                               `scroll-pt-[76px]`,
-                          ],
+                          ]
                 ) +
                 (customization.styling.corners === CustomizationCorners.Straight
                     ? ' straight-corners'
@@ -67,30 +90,30 @@ export default async function SpaceRootLayout(props: { children: React.ReactNode
                     :root {
                         ${generateColorVariable(
                             'primary-color',
-                            customization.styling.primaryColor.light,
+                            customization.styling.primaryColor.light
                         )}
                         ${generateColorVariable(
                             'primary-base',
-                            customization.styling.primaryColor.light,
+                            customization.styling.primaryColor.light
                         )}
                         ${generateColorVariable(
                             'header-background',
-                            headerTheme.backgroundColor.light,
+                            headerTheme.backgroundColor.light
                         )}
                         ${generateColorVariable('header-link', headerTheme.linkColor.light)}
                     }
                     .dark {
                         ${generateColorVariable(
                             'primary-color',
-                            customization.styling.primaryColor.dark,
+                            customization.styling.primaryColor.dark
                         )}
                         ${generateColorVariable(
                             'primary-base',
-                            customization.styling.primaryColor.dark,
+                            customization.styling.primaryColor.dark
                         )}
                         ${generateColorVariable(
                             'header-background',
-                            headerTheme.backgroundColor.dark,
+                            headerTheme.backgroundColor.dark
                         )}
                         ${generateColorVariable('header-link', headerTheme.linkColor.dark)}
                     }
@@ -102,7 +125,7 @@ export default async function SpaceRootLayout(props: { children: React.ReactNode
                     `${fonts[customization.styling.font].className}`,
                     `${ibmPlexMono.variable}`,
                     'bg-light',
-                    'dark:bg-dark',
+                    'dark:bg-dark'
                 )}
             >
                 <ClientContexts language={language}>{children}</ClientContexts>
