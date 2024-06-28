@@ -141,11 +141,12 @@ async function generateMetadata({ params }: { params: PagePathParams }): Promise
  * For preview, the theme can be set via query string (?theme=light).
  */
 function getQueryStringTheme() {
-    const headersList = headers();
-    const queryStringTheme = headersList.get('x-gitbook-theme');
-    if (!queryStringTheme) {
-        return null;
-    }
+    // const headersList = headers();
+    // const queryStringTheme = headersList.get('x-gitbook-theme');
+    // if (!queryStringTheme) {
+    //     return null;
+    // }
+    return null;
 
     return queryStringTheme === 'light'
         ? CustomizationThemeMode.Light

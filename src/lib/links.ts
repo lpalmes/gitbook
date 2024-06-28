@@ -23,26 +23,28 @@ export interface PageHrefContext {
  * The value will start and finish with /
  */
 export function basePath(): string {
-    const headersList = headers();
-    let path = headersList.get('x-gitbook-basepath') ?? '/';
+    return '/';
+    // const headersList = headers();
+    // let path = headersList.get('x-gitbook-basepath') ?? '/';
 
-    if (!path.startsWith('/')) {
-        path = '/' + path;
-    }
+    // if (!path.startsWith('/')) {
+    //     path = '/' + path;
+    // }
 
-    if (!path.endsWith('/')) {
-        path = path + '/';
-    }
+    // if (!path.endsWith('/')) {
+    //     path = path + '/';
+    // }
 
-    return path;
+    // return path;
 }
 
 /**
  * Return the current host for the current request.
  */
 export function host(): string {
-    const headersList = headers();
-    return headersList.get('x-gitbook-host') ?? headersList.get('host') ?? '';
+    // const headersList = headers();
+    // return headersList.get('x-gitbook-host') ?? headersList.get('host') ?? '';
+    return '';
 }
 
 /**
@@ -103,7 +105,7 @@ export function pageHref(
     page: RevisionPageDocument | RevisionPageGroup,
     context: PageHrefContext = {},
     /** Anchor to link to in the page. */
-    anchor?: string,
+    anchor?: string
 ): string {
     const { pdf } = context;
 
@@ -128,7 +130,7 @@ export function pageHref(
  */
 export function pagePDFContainerId(
     page: RevisionPageDocument | RevisionPageGroup,
-    anchor?: string,
+    anchor?: string
 ): string {
     return `pdf-page-${page.id}` + (anchor ? `-${anchor}` : '');
 }

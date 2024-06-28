@@ -82,8 +82,9 @@ export const DEFAULT_API_ENDPOINT = process.env.GITBOOK_API_URL ?? 'https://api.
  * Create a new API client with a token.
  */
 export function apiWithToken(apiToken: string): GitBookAPI {
-    const headersList = headers();
-    const apiEndpoint = headersList.get('x-gitbook-api') ?? DEFAULT_API_ENDPOINT;
+    // const headersList = headers();
+    // const apiEndpoint = headersList.get('x-gitbook-api') ?? DEFAULT_API_ENDPOINT;
+    const apiEndpoint = DEFAULT_API_ENDPOINT;
 
     const gitbook = new GitBookAPI({
         authToken: apiToken,
@@ -858,22 +859,22 @@ export const getSpaceCustomizationFromAPI = cache(
  * Get the customization settings for a space from the API.
  */
 export async function getSpaceCustomization(spaceId: string): Promise<CustomizationSettings> {
-    const headersList = headers();
+    // const headersList = headers();
     const raw = await getSpaceCustomizationFromAPI(spaceId);
 
-    const extend = headersList.get('x-gitbook-customization');
-    if (extend) {
-        try {
-            const parsed = rison.decode_object<Partial<CustomizationSettings>>(extend);
-            return { ...raw, ...parsed };
-        } catch (error) {
-            console.error(
-                `Failed to parse x-gitbook-customization header (ignored): ${
-                    (error as Error).stack ?? (error as Error).message ?? error
-                }`
-            );
-        }
-    }
+    // const extend = headersList.get('x-gitbook-customization');
+    // if (extend) {
+    //     try {
+    //         const parsed = rison.decode_object<Partial<CustomizationSettings>>(extend);
+    //         return { ...raw, ...parsed };
+    //     } catch (error) {
+    //         console.error(
+    //             `Failed to parse x-gitbook-customization header (ignored): ${
+    //                 (error as Error).stack ?? (error as Error).message ?? error
+    //             }`
+    //         );
+    //     }
+    // }
 
     return raw;
 }
