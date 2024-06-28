@@ -21,7 +21,8 @@ export const dynamic = 'force-static';
 export default async function Page(props: { params: PagePathParams }) {
     const { params } = props;
 
-    const rawPathname = getPathnameParam(params.pathname?.slice(2));
+    const rawPathname = getPathnameParam(params.pathname);
+
     const { contentTarget, space, customization, pages, page, document } =
         await fetchPageData(params);
     const linksContext: PageHrefContext = {};
@@ -38,7 +39,8 @@ export default async function Page(props: { params: PagePathParams }) {
             notFound();
         }
     } else if (getPagePath(pages, page) !== rawPathname) {
-        redirect(pageHref(pages, page, linksContext));
+        console.log('redirect to ', pageHref(pages, page, linksContext));
+        // redirect(pageHref(pages, page, linksContext));
     }
 
     const withTopHeader = customization.header.preset !== CustomizationHeaderPreset.None;

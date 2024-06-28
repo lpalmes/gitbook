@@ -32,7 +32,7 @@ export function PageDocumentItem(props: {
                                 'my-2',
                                 'border-l',
                                 'border-dark/3',
-                                'dark:border-light/2',
+                                'dark:border-light/2'
                             )}
                             ancestors={ancestors}
                             context={context}

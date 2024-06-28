@@ -33,7 +33,7 @@ export async function PageCover(props: {
                           '-lg:mr-8',
                           page.layout.tableOfContents ? 'lg:ml-0' : null,
                       ]
-                    : ['sm:mx-auto', 'max-w-3xl', 'sm:rounded-md', 'mb-8'],
+                    : ['sm:mx-auto', 'max-w-3xl', 'sm:rounded-md', 'mb-8']
             )}
         >
             <Image

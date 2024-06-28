@@ -2,6 +2,7 @@ import { ContentPointer, getPublishedContentByUrl } from './api';
 
 export async function getContentPointerByPathname(pathname: string) {
     const content = await getPublishedContentByUrl(pathname, undefined);
+    console.log(content);
 
     if ('error' in content) {
         console.log(pathname);

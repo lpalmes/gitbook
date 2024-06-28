@@ -29,48 +29,51 @@ export interface PageIdParams {
  * Get the current content pointer from the params.
  */
 export function getContentPointer(): ContentPointer | SiteContentPointer {
-    const headerSet = headers();
-    const spaceId = headerSet.get('x-gitbook-content-space');
+    // const headerSet = headers();
+    const spaceId = process.env.GITBOOK_SPACE_ID;
     if (!spaceId) {
         throw new Error(
             'getContentPointer is called outside the scope of a request processed by the middleware'
         );
     }
 
-    const siteId = headerSet.get('x-gitbook-content-site');
-    if (siteId) {
-        const organizationId = headerSet.get('x-gitbook-content-organization');
-        const siteSpaceId = headerSet.get('x-gitbook-content-site-space');
-        if (!organizationId) {
-            throw new Error('Missing site content headers');
-        }
+    // // const siteId = headerSet.get('x-gitbook-content-site');
+    // // const siteId = headerSet.get('x-gitbook-content-site');
+    // if (siteId) {
+    //     const organizationId = headerSet.get('x-gitbook-content-organization');
+    //     const siteSpaceId = headerSet.get('x-gitbook-content-site-space');
+    //     if (!organizationId) {
+    //         throw new Error('Missing site content headers');
+    //     }
 
-        const siteContent: SiteContentPointer = {
-            siteId,
-            spaceId,
-            siteSpaceId: siteSpaceId ?? undefined,
-            organizationId,
-            revisionId: headerSet.get('x-gitbook-content-revision') ?? undefined,
-            changeRequestId: headerSet.get('x-gitbook-content-changerequest') ?? undefined,
-        };
-        return siteContent;
-    } else {
-        const content: ContentPointer = {
-            spaceId,
-            revisionId: headerSet.get('x-gitbook-content-revision') ?? undefined,
-            changeRequestId: headerSet.get('x-gitbook-content-changerequest') ?? undefined,
-        };
-        return content;
-    }
+    //     const siteContent: SiteContentPointer = {
+    //         siteId,
+    //         spaceId,
+    //         siteSpaceId: siteSpaceId ?? undefined,
+    //         organizationId,
+    //         revisionId: headerSet.get('x-gitbook-content-revision') ?? undefined,
+    //         changeRequestId: headerSet.get('x-gitbook-content-changerequest') ?? undefined,
+    //     };
+    //     return siteContent;
+    // } else {
+    const content: ContentPointer = {
+        spaceId,
+        revisionId: undefined,
+        changeRequestId: undefined,
+    };
+    // return content;
+    // }
+    //
+    return content;
 }
 
 /**
  * Fetch all the data needed to render the space layout.
  */
 export async function fetchSpaceData(pathname: string[]) {
-    const rawPathname = `https://${getPathnameParam(pathname)}`;
-    const content = await getContentPointerByPathname(rawPathname);
-    // const content = getContentPointer();
+    // const rawPathname = `https://${getPathnameParam(pathname)}`;
+    // const content = await getContentPointerByPathname(rawPathname);
+    const content = getContentPointer();
 
     const [{ space, contentTarget, pages, customization, scripts }, parentSite] = await Promise.all(
         'siteId' in content
@@ -100,11 +103,12 @@ export async function fetchPageData(params: PagePathParams | PageIdParams) {
     // const content = getContentPointer();
 
     // @ts-ignore
-    const rawPathname = `https://${getPathnameParam(params.pathname)}`;
+    // const rawPathname = `https://${getPathnameParam(params.pathname)}`;
 
-    console.log(rawPathname);
+    // console.log(rawPathname);
 
-    const content = await getContentPointerByPathname(rawPathname);
+    // const content = await getContentPointerByPathname(rawPathname);
+    const content = getContentPointer();
 
     console.log({ content });
 
@@ -148,7 +152,7 @@ async function resolvePage(
         return resolvePageId(pages, params.pageId);
     }
 
-    const rawPathname = getPathnameParam(params.pathname?.slice(2));
+    const rawPathname = getPathnameParam(params.pathname);
     const pathname = normalizePathname(rawPathname);
 
     // When resolving a page, we use the lowercased pathname

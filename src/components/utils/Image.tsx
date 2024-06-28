@@ -108,9 +108,11 @@ export async function Image(
                 dark?: ImageSource | null;
             };
         } & ImageCommonProps
-    >,
+    >
 ) {
     const { sources, style, inline = false, ...rest } = props;
+
+    return null;
 
     return (
         <>
@@ -122,7 +124,7 @@ export async function Image(
                     rest.className,
                     inline ? 'inline' : 'block',
                     sources.dark ? 'dark:hidden' : null,
-                    style,
+                    style
                 )}
             />
             {sources.dark ? (
@@ -137,7 +139,7 @@ export async function Image(
                         rest.className,
                         'hidden',
                         inline ? 'dark:inline' : 'dark:block',
-                        style,
+                        style
                     )}
                 />
             ) : null}
@@ -237,7 +239,7 @@ async function ImagePicture(
         {
             source: ImageSource;
         } & ImageCommonProps
-    >,
+    >
 ) {
     const {
         source,

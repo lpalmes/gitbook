@@ -16,6 +16,7 @@ import { shouldIndexSpace } from '@/lib/seo';
 import { ClientContexts } from './ClientContexts';
 import { RocketLoaderDetector } from './RocketLoaderDetector';
 import { PagePathParams, fetchSpaceData } from '../../fetch';
+import { SpaceRootLayout } from '../../SpaceLayout';
 
 // export default async function ContentLayoutStub(props: { children: React.ReactNode }) {
 //     return props.children;
@@ -51,45 +52,47 @@ export default async function ContentLayout(props: {
     });
 
     return (
-        <ClientContexts
-            nonce={nonce}
-            forcedTheme={
-                getQueryStringTheme() ??
-                (customization.themes.toggeable ? undefined : customization.themes.default)
-            }
-        >
-            <SpaceLayout
-                space={space}
-                contentTarget={contentTarget}
-                parent={parent}
-                spaces={spaces}
-                customization={customization}
-                pages={pages}
-                ancestors={ancestors}
-                content={content}
+        <SpaceRootLayout pathname={props.params.pathname ?? []}>
+            <ClientContexts
+                nonce={nonce}
+                forcedTheme={
+                    getQueryStringTheme() ??
+                    (customization.themes.toggeable ? undefined : customization.themes.default)
+                }
             >
-                {children}
-            </SpaceLayout>
+                <SpaceLayout
+                    space={space}
+                    contentTarget={contentTarget}
+                    parent={parent}
+                    spaces={spaces}
+                    customization={customization}
+                    pages={pages}
+                    ancestors={ancestors}
+                    content={content}
+                >
+                    {children}
+                </SpaceLayout>
 
-            {scripts.length > 0 ? (
-                <>
-                    <LoadIntegrations />
-                    {scripts.map(({ script }) => (
-                        <script key={script} async src={script} nonce={nonce} />
-                    ))}
-                </>
-            ) : null}
+                {scripts.length > 0 ? (
+                    <>
+                        <LoadIntegrations />
+                        {scripts.map(({ script }) => (
+                            <script key={script} async src={script} nonce={nonce} />
+                        ))}
+                    </>
+                ) : null}
 
-            {scripts.some((script) => script.cookies) || customization.privacyPolicy.url ? (
-                <React.Suspense fallback={null}>
-                    <CookiesToast privacyPolicy={customization.privacyPolicy.url} />
-                </React.Suspense>
-            ) : null}
+                {scripts.some((script) => script.cookies) || customization.privacyPolicy.url ? (
+                    <React.Suspense fallback={null}>
+                        <CookiesToast privacyPolicy={customization.privacyPolicy.url} />
+                    </React.Suspense>
+                ) : null}
 
-            <RocketLoaderDetector nonce={nonce} />
+                <RocketLoaderDetector nonce={nonce} />
 
-            <AdminToolbar space={space} content={content} />
-        </ClientContexts>
+                <AdminToolbar space={space} content={content} />
+            </ClientContexts>
+        </SpaceRootLayout>
     );
 }
 
